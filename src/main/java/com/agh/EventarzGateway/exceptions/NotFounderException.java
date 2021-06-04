@@ -1,6 +1,6 @@
 package com.agh.EventarzGateway.exceptions;
 
-public class NotFounderException extends Exception {
+public class NotFounderException extends RuntimeException {
 
     public NotFounderException(String message) {
         super(message);

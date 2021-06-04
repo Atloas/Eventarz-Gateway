@@ -1,5 +1,6 @@
 package com.agh.EventarzGateway.services;
 
+import com.agh.EventarzGateway.exceptions.EventFullException;
 import com.agh.EventarzGateway.exceptions.NotOrganizerException;
 import com.agh.EventarzGateway.exceptions.UserNotInEventsGroupException;
 import com.agh.EventarzGateway.feignClients.DataClient;
@@ -80,11 +81,15 @@ public class EventService {
         return dataClient.deleteEvent(uuid);
     }
 
-    public EventDTO join(String uuid, Principal principal) throws UserNotInEventsGroupException {
+    public EventDTO join(String uuid, Principal principal) throws UserNotInEventsGroupException, EventFullException {
         Event event = dataClient.getEvent(uuid);
         if (checkIfUserIsInEventsGroup(principal.getName(), event.getGroup().getUuid())) {
-            event = dataClient.joinEvent(uuid, principal.getName());
-            return new EventDTO(event);
+            if (event.getParticipantCount() < event.getMaxParticipants()) {
+                event = dataClient.joinEvent(uuid, principal.getName());
+                return new EventDTO(event);
+            } else {
+                throw new EventFullException("This event is already full!");
+            }
         } else {
             throw new UserNotInEventsGroupException("User " + principal.getName() + " is not in the group of event " + uuid + "!");
         }

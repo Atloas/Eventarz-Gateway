@@ -1,5 +1,6 @@
 package com.agh.EventarzGateway.controllers;
 
+import com.agh.EventarzGateway.exceptions.FounderAttemptingToLeaveException;
 import com.agh.EventarzGateway.exceptions.NotFounderException;
 import com.agh.EventarzGateway.model.GroupForm;
 import com.agh.EventarzGateway.model.dtos.GroupDTO;
@@ -28,8 +29,6 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
-
-    // TODO: Catch dataService errors (all the NOT FOUNDs)
 
     @GetMapping("/groups")
     public List<GroupSearchedDTO> getMyGroups(Principal principal) {
@@ -83,7 +82,12 @@ public class GroupController {
 
     @DeleteMapping("/groups/{uuid}/members/{username}")
     public GroupDTO leave(@PathVariable String uuid, @PathVariable String username, Principal principal) {
-        GroupDTO groupDTO = groupService.leave(uuid, principal);
-        return groupDTO;
+        try {
+            GroupDTO groupDTO = groupService.leave(uuid, principal);
+            return groupDTO;
+        } catch (FounderAttemptingToLeaveException e) {
+            // FORBIDDEN or BAD_REQUEST?
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot leave Groups you founded!", e);
+        }
     }
 }

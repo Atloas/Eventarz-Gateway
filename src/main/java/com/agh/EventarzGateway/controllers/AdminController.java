@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-// TODO: Handle 404s from feign
-
 @RestController
 @Secured("ADMIN")
 public class AdminController {
@@ -43,7 +41,6 @@ public class AdminController {
         return userShortDTOs;
     }
 
-    // TODO: Catch 404s here and in other controllers
     @GetMapping("admin/users/{username}")
     public UserDTO getUser(@PathVariable String username) {
         UserDTO userDTO = userService.getUser(username);

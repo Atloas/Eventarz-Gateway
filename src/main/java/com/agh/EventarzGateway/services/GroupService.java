@@ -1,5 +1,6 @@
 package com.agh.EventarzGateway.services;
 
+import com.agh.EventarzGateway.exceptions.FounderAttemptingToLeaveException;
 import com.agh.EventarzGateway.exceptions.NotFounderException;
 import com.agh.EventarzGateway.feignClients.DataClient;
 import com.agh.EventarzGateway.model.Group;
@@ -75,8 +76,12 @@ public class GroupService {
         return groupDTO;
     }
 
-    public GroupDTO leave(String uuid, Principal principal) {
-        Group group = dataClient.leaveGroup(uuid, principal.getName());
+    public GroupDTO leave(String uuid, Principal principal) throws FounderAttemptingToLeaveException {
+        Group group = dataClient.getGroup(uuid);
+        if (group.getFounder().getUsername().equals(principal.getName())) {
+            throw new FounderAttemptingToLeaveException("The founder can't leave their group!");
+        }
+        group = dataClient.leaveGroup(uuid, principal.getName());
         GroupDTO groupDTO = new GroupDTO(group);
         return groupDTO;
     }

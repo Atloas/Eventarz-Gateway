@@ -1,10 +1,8 @@
 package com.agh.EventarzGateway.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

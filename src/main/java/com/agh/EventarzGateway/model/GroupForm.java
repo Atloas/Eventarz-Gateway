@@ -12,13 +12,14 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupForm {
-    @Size(min = 5, max = 64)
-    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+")
+    @Size(min = 5, message = "Name is too short!")
+    @Size(max = 64, message = "Name is too long!")
+    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+", message = "Name contains invalid characters!")
     private String name;
-    @Size(max = 1024)
-    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+")
+    @Size(max = 1024, message = "Description is too long!")
+    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+", message = "Description contains invalid characters!")
     private String description;
-    @NotBlank
+    @NotBlank(message = "Founder username is blank!")
     private String founderUsername;
 
     public GroupForm(GroupForm that) {

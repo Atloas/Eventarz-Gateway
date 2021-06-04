@@ -12,8 +12,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginForm {
-    @NotBlank
+    @NotBlank(message = "Username is blank!")
     private String username;
-    @NotBlank
+    @NotBlank(message = "Password is blank!")
     private String password;
 }

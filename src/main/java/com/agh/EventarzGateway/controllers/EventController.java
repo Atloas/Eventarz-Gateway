@@ -1,5 +1,6 @@
 package com.agh.EventarzGateway.controllers;
 
+import com.agh.EventarzGateway.exceptions.EventFullException;
 import com.agh.EventarzGateway.exceptions.NotOrganizerException;
 import com.agh.EventarzGateway.exceptions.UserNotInEventsGroupException;
 import com.agh.EventarzGateway.model.EventForm;
@@ -88,6 +89,9 @@ public class EventController {
             return eventDTO;
         } catch (UserNotInEventsGroupException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to join this Event!", e);
+        } catch (EventFullException e) {
+            // BAD_REQUEST?
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Event is already full!", e);
         }
     }
 

@@ -15,21 +15,22 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventForm {
-    @Size(min = 5, max = 64)
-    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+")
+    @Size(min = 5, message = "Name too short!")
+    @Size(max = 64, message = "Name too long!")
+    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+", message = "Name contains invalid characters!")
     private String name;
-    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]*")
+    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]*", message = "Description contains invalid characters!")
     private String description;
-    @Min(1)
-    @Max(100)
+    @Min(value = 1, message = "Max participants has to be at least 1!")
+    @Max(value = 100, message = "Max participants has to be at most 100!")
     private int maxParticipants;
-    @NotBlank
-    @FutureDate
+    @NotBlank(message = "Date field blank!")
+    @FutureDate(message = "Date is invalid!")
     private String eventDate;
     private boolean participate;
-    // Filled with principal's name
+    // Starts empty, then filled with principal's name
     private String organizerUsername;
-    @NotBlank
+    @NotBlank(message = "Group uuid is blank!")
     private String groupUuid;
 
     public EventForm(EventForm that) {

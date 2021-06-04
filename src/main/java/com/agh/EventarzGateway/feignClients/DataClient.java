@@ -7,7 +7,7 @@ import com.agh.EventarzGateway.model.Group;
 import com.agh.EventarzGateway.model.GroupForm;
 import com.agh.EventarzGateway.model.SecurityDetails;
 import com.agh.EventarzGateway.model.User;
-import com.agh.EventarzGateway.model.UserForm;
+import com.agh.EventarzGateway.model.NewUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +30,7 @@ public interface DataClient {
     List<User> getUsersByRegex(@RequestParam String regex);
 
     @PostMapping("/users")
-    User createUser(@RequestBody UserForm userForm);
+    User createUser(@RequestBody NewUser newUser);
 
     @GetMapping("/users/{username}")
     User getUser(@PathVariable String username);

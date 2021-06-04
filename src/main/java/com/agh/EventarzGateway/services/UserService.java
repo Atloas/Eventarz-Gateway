@@ -6,7 +6,7 @@ import com.agh.EventarzGateway.model.BanForm;
 import com.agh.EventarzGateway.model.SecurityDetails;
 import com.agh.EventarzGateway.model.User;
 import com.agh.EventarzGateway.model.RegisterForm;
-import com.agh.EventarzGateway.model.UserForm;
+import com.agh.EventarzGateway.model.NewUser;
 import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
 import feign.FeignException;
@@ -36,11 +36,11 @@ public class UserService implements UserDetailsService {
         if (checkIfUsernameExists(registerForm.getUsername())) {
             throw new UserAlreadyExistsException("There already is an account with username " + registerForm.getUsername() + "!");
         }
-        UserForm userForm = new UserForm();
-        userForm.setUsername(registerForm.getUsername());
-        userForm.setPasswordHash(passwordEncoder.encode(registerForm.getPassword()));
-        userForm.setRoles(Arrays.asList("USER"));
-        User user = dataClient.createUser(userForm);
+        NewUser newUser = new NewUser();
+        newUser.setUsername(registerForm.getUsername());
+        newUser.setPasswordHash(passwordEncoder.encode(registerForm.getPassword()));
+        newUser.setRoles(Arrays.asList("USER"));
+        User user = dataClient.createUser(newUser);
         return user;
     }
 
