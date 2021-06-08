@@ -1,6 +1,6 @@
 package com.agh.EventarzGateway.config;
 
-import com.agh.EventarzGateway.services.UserService;
+import com.agh.EventarzGateway.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,9 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @ComponentScan
@@ -26,15 +23,10 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private AuthenticationService authenticationService;
 
     @Autowired
     private JwtFilter jwtFilter;
-
-//    @Override
-//    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-//        auth.authenticationProvider(authenticationProvider());
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,17 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and();
 
-        // Set unauthorized requests exception handler
-//        http = http
-//                .exceptionHandling()
-//                .authenticationEntryPoint(
-//                        (request, response, ex) -> {
-//                            logger.error("Unauthorized request - {}", ex.getMessage());
-//                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-//                        }
-//                )
-//                .and();
-
         // Set permissions on endpoints
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login", "/users").permitAll()
@@ -67,18 +48,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    // Unused for now
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
+        authProvider.setUserDetailsService(authenticationService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> userService.loadUserByUsername(username));
+        auth.userDetailsService(username -> authenticationService.loadUserByUsername(username));
     }
 
     @Bean
@@ -86,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    // Expose authentication manager bean
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {

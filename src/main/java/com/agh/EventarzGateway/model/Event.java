@@ -21,8 +21,8 @@ public class Event {
     private String publishedDate;
     @JsonIgnore
     private LocalDateTime publishedDateObject;
-    private boolean expired;
     private int participantCount;
+    private boolean happened;
     private boolean stripped;
     public User organizer;
     public List<User> participants;

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// TODO: Should this conversion be done here or in DataService? Probably DataService
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +16,7 @@ public class EventShortDTO {
     private int participantCount;
     private String eventDate;
     private GroupShortDTO group;
+    private boolean happened;
 
     public EventShortDTO(Event event) {
         this.uuid = event.getUuid();
@@ -26,5 +25,6 @@ public class EventShortDTO {
         this.maxParticipants = event.getMaxParticipants();
         this.participantCount = event.getParticipantCount();
         this.eventDate = event.getEventDate();
+        this.happened = event.isHappened();
     }
 }

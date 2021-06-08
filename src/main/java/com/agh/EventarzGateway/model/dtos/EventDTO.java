@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Should this conversion be done here or in DataService?
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +19,7 @@ public class EventDTO {
     private int maxParticipants;
     private String eventDate;
     private String publishedDate;
+    private boolean happened;
     private UserShortDTO organizer;
     private List<UserShortDTO> participants;
     private GroupShortDTO group;
@@ -32,6 +31,7 @@ public class EventDTO {
         this.maxParticipants = event.getMaxParticipants();
         this.eventDate = event.getEventDate();
         this.publishedDate = event.getPublishedDate();
+        this.happened = event.isHappened();
         this.organizer = new UserShortDTO(event.getOrganizer());
         this.participants = new ArrayList<>();
         for (User participant : event.getParticipants()) {

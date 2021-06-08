@@ -33,8 +33,7 @@ public class EventService {
     }
 
     public List<EventHomeDTO> getHomeEvents(Principal principal) {
-        // TODO: Send back only events that are to happen in the next week or so
-        List<Event> events = dataClient.getMyEvents(principal.getName());
+        List<Event> events = dataClient.getHomeEvents(principal.getName(), true);
         List<EventHomeDTO> eventHomeDTOs = new ArrayList<>();
         for (Event event : events) {
             eventHomeDTOs.add(new EventHomeDTO(event));

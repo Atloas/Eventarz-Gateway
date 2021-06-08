@@ -53,6 +53,9 @@ public interface DataClient {
     List<Event> getMyEvents(@RequestParam String username);
 
     @GetMapping("/events")
+    List<Event> getHomeEvents(@RequestParam String username, @RequestParam boolean home);
+
+    @GetMapping("/events")
     List<Event> getEventsByRegex(@RequestParam String regex);
 
     @PostMapping("/events")

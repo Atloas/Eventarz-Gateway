@@ -1,14 +1,14 @@
 package com.agh.EventarzGateway.config;
 
 import com.agh.EventarzGateway.feignClients.DataClient;
-import com.agh.EventarzGateway.model.SecurityDetails;
+import com.agh.EventarzGateway.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,8 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.google.common.collect.ImmutableSet.of;
 import static java.util.Optional.ofNullable;
@@ -32,6 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtUtility jwtUtility;
     @Autowired
     private DataClient dataClient;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -55,16 +55,10 @@ public class JwtFilter extends OncePerRequestFilter {
         // TODO: Should this call the DB for data every time? Only call on non-GET requests?
 
         String username = jwtUtility.getUsername(token);
-        SecurityDetails securityDetails = dataClient.getSecurityDetails(username);
         User userDetails;
-        // TODO: This needs to be redone, especially authorities
-        if (securityDetails != null) {
-            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            for (String role : securityDetails.getRoles()) {
-                authorities.add(new SimpleGrantedAuthority(role));
-            }
-            userDetails = new User(jwtUtility.getUsername(token), "", authorities);
-        } else {
+        try {
+            userDetails = (User) authenticationService.loadUserByUsername(username);
+        } catch (UsernameNotFoundException e) {
             userDetails = null;
         }
 
