@@ -1,8 +1,8 @@
 package com.agh.EventarzGateway.controllers;
 
-import com.agh.EventarzGateway.model.LoginForm;
-import com.agh.EventarzGateway.model.RegisterForm;
 import com.agh.EventarzGateway.model.dtos.LoginResponseDTO;
+import com.agh.EventarzGateway.model.inputs.LoginForm;
+import com.agh.EventarzGateway.model.inputs.RegisterForm;
 import com.agh.EventarzGateway.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

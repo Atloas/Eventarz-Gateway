@@ -1,6 +1,6 @@
 package com.agh.EventarzGateway.config;
 
-import com.agh.EventarzGateway.feignClients.DataClient;
+import com.agh.EventarzGateway.feignClients.UsersClient;
 import com.agh.EventarzGateway.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtility jwtUtility;
     @Autowired
-    private DataClient dataClient;
+    private UsersClient usersClient;
     @Autowired
     private AuthenticationService authenticationService;
 

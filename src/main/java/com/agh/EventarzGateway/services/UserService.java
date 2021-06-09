@@ -1,10 +1,14 @@
 package com.agh.EventarzGateway.services;
 
-import com.agh.EventarzGateway.feignClients.DataClient;
-import com.agh.EventarzGateway.model.BanForm;
-import com.agh.EventarzGateway.model.User;
+import com.agh.EventarzGateway.feignClients.EventsClient;
+import com.agh.EventarzGateway.feignClients.GroupsClient;
+import com.agh.EventarzGateway.feignClients.UsersClient;
 import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
+import com.agh.EventarzGateway.model.events.Event;
+import com.agh.EventarzGateway.model.groups.Group;
+import com.agh.EventarzGateway.model.inputs.BanForm;
+import com.agh.EventarzGateway.model.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +19,14 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private DataClient dataClient;
+    private UsersClient usersClient;
+    @Autowired
+    private GroupsClient groupsClient;
+    @Autowired
+    private EventsClient eventsClient;
 
     public List<UserShortDTO> getUsersByRegex(String username) {
-        List<User> users = dataClient.getUsersByRegex("(?i).*" + username + ".*");
+        List<User> users = usersClient.getUsersByName(username);
         List<UserShortDTO> userShortDTOs = new ArrayList<>();
         for (User user : users) {
             userShortDTOs.add(new UserShortDTO(user));
@@ -27,14 +35,24 @@ public class UserService {
     }
 
     public UserDTO getUser(String username) {
-        User user = dataClient.getUser(username);
-        UserDTO userDTO = new UserDTO(user);
+        User user = usersClient.getUser(username);
+        // TODO: Parallelize
+        List<Group> foundedGroups = groupsClient.getFoundedGroups(username);
+        List<Group> joinedGroups = groupsClient.getJoinedGroups(username);
+        List<Event> organizedEvents = eventsClient.getOrganizedEvents(username);
+        List<Event> joinedEvents = eventsClient.getJoinedEvents(username);
+        UserDTO userDTO = new UserDTO(user, foundedGroups, joinedGroups, organizedEvents, joinedEvents);
         return userDTO;
     }
 
+    // TODO: Is it necessary to update this info on front?
     public UserDTO changeBannedStatus(String username, BanForm banForm) {
-        User user = dataClient.changeBanStatus(username, banForm);
-        UserDTO userDTO = new UserDTO(user);
+        User user = usersClient.changeBanStatus(username, banForm);
+        List<Group> foundedGroups = groupsClient.getFoundedGroups(username);
+        List<Group> joinedGroups = groupsClient.getJoinedGroups(username);
+        List<Event> organizedEvents = eventsClient.getOrganizedEvents(username);
+        List<Event> joinedEvents = eventsClient.getJoinedEvents(username);
+        UserDTO userDTO = new UserDTO(user, foundedGroups, joinedGroups, organizedEvents, joinedEvents);
         return userDTO;
     }
 }

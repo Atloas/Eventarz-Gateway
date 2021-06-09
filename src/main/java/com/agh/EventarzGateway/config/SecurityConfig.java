@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Set permissions on endpoints
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login", "/users").permitAll()
+                .antMatchers(HttpMethod.POST, "/login", "/register").permitAll()
                 .anyRequest().authenticated();
 
         // Add JWT token filter

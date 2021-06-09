@@ -2,9 +2,9 @@ package com.agh.EventarzGateway.controllers;
 
 import com.agh.EventarzGateway.exceptions.FounderAttemptingToLeaveException;
 import com.agh.EventarzGateway.exceptions.NotFounderException;
-import com.agh.EventarzGateway.model.GroupForm;
 import com.agh.EventarzGateway.model.dtos.GroupDTO;
 import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
+import com.agh.EventarzGateway.model.inputs.GroupForm;
 import com.agh.EventarzGateway.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,10 +65,9 @@ public class GroupController {
     }
 
     @DeleteMapping("/groups/{uuid}")
-    public String deleteGroup(@PathVariable String uuid, Principal principal) {
+    public void deleteGroup(@PathVariable String uuid, Principal principal) {
         try {
-            String oldUuid = groupService.deleteGroup(uuid, principal);
-            return oldUuid;
+            groupService.deleteGroup(uuid, principal);
         } catch (NotFounderException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this Group!", e);
         }

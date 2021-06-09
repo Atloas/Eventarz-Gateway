@@ -1,6 +1,6 @@
 package com.agh.EventarzGateway.model.dtos;
 
-import com.agh.EventarzGateway.model.Event;
+import com.agh.EventarzGateway.model.events.Event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class EventShortDTO {
         this.name = event.getName();
         this.description = event.getDescription();
         this.maxParticipants = event.getMaxParticipants();
-        this.participantCount = event.getParticipantCount();
+        this.participantCount = event.getParticipants().size();
         this.eventDate = event.getEventDate();
         this.happened = event.isHappened();
     }

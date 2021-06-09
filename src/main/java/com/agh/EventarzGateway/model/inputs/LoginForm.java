@@ -1,4 +1,4 @@
-package com.agh.EventarzGateway.model;
+package com.agh.EventarzGateway.model.inputs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

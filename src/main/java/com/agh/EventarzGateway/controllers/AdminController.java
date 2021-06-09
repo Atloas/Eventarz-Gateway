@@ -1,12 +1,12 @@
 package com.agh.EventarzGateway.controllers;
 
-import com.agh.EventarzGateway.model.BanForm;
 import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
 import com.agh.EventarzGateway.model.dtos.GroupDTO;
 import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
 import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
+import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.services.EventService;
 import com.agh.EventarzGateway.services.GroupService;
 import com.agh.EventarzGateway.services.UserService;
@@ -68,16 +68,15 @@ public class AdminController {
     }
 
     @DeleteMapping("admin/groups/{uuid}")
-    public String adminDeleteGroup(@PathVariable String uuid) {
-        String oldUuid = groupService.adminDeleteGroup(uuid);
-        return oldUuid;
+    public void adminDeleteGroup(@PathVariable String uuid) {
+        groupService.adminDeleteGroup(uuid);
     }
 
     // EVENTS
 
     @GetMapping("admin/events")
     public List<EventHomeDTO> getEventsByRegex(@RequestParam String name) {
-        List<EventHomeDTO> eventHomeDTOs = eventService.getEventsByRegex(name);
+        List<EventHomeDTO> eventHomeDTOs = eventService.getEventsByName(name);
         return eventHomeDTOs;
     }
 
@@ -88,8 +87,7 @@ public class AdminController {
     }
 
     @DeleteMapping("admin/events/{uuid}")
-    public String adminDeleteEvent(@PathVariable String uuid) {
-        String oldUuid = eventService.adminDeleteEvent(uuid);
-        return oldUuid;
+    public void adminDeleteEvent(@PathVariable String uuid) {
+        eventService.adminDeleteEvent(uuid);
     }
 }

@@ -3,9 +3,9 @@ package com.agh.EventarzGateway.controllers;
 import com.agh.EventarzGateway.exceptions.EventFullException;
 import com.agh.EventarzGateway.exceptions.NotOrganizerException;
 import com.agh.EventarzGateway.exceptions.UserNotInEventsGroupException;
-import com.agh.EventarzGateway.model.EventForm;
 import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
+import com.agh.EventarzGateway.model.inputs.EventForm;
 import com.agh.EventarzGateway.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,10 +73,9 @@ public class EventController {
     }
 
     @DeleteMapping("/events/{uuid}")
-    public String delete(@PathVariable String uuid, Principal principal) {
+    public void delete(@PathVariable String uuid, Principal principal) {
         try {
-            String oldUuid = eventService.deleteEvent(uuid, principal);
-            return oldUuid;
+            eventService.deleteEvent(uuid, principal);
         } catch (NotOrganizerException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this Event!", e);
         }
