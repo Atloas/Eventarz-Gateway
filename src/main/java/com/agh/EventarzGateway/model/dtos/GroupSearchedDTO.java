@@ -20,6 +20,5 @@ public class GroupSearchedDTO {
         this.name = group.getName();
         this.description = group.getDescription();
         this.memberCount = group.getMembers().size();
-        this.eventCount = group.getEvents().size();
     }
 }

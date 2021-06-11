@@ -15,7 +15,6 @@ public class Group {
     private String createdDate;
     private String founderUsername;
     private List<GroupMember> members;
-    private List<GroupEvent> events;
 
     public boolean checkIfUserIsInGroup(String username) {
         for (GroupMember member : this.getMembers()) {
@@ -24,13 +23,5 @@ public class Group {
             }
         }
         return false;
-    }
-
-    public List<String> getEventUuids() {
-        ArrayList<String> eventUuids = new ArrayList<>();
-        for (GroupEvent event : this.getEvents()) {
-            eventUuids.add(event.getEventUuid());
-        }
-        return eventUuids;
     }
 }

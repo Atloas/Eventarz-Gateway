@@ -17,7 +17,7 @@ public class GroupForm {
     @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+", message = "Name contains invalid characters!")
     private String name;
     @Size(max = 1024, message = "Description is too long!")
-    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+", message = "Description contains invalid characters!")
+    @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]*", message = "Description contains invalid characters!")
     private String description;
     // Filled by Gateway with principal.getName()
     private String founderUsername;

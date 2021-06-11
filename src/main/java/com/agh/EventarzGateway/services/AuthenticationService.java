@@ -28,6 +28,7 @@ import java.util.List;
 @Service
 public class AuthenticationService implements UserDetailsService {
 
+    // Autowired alongside other security stuff to avoid a circular dependency
     @Autowired
     private UsersClient usersClient;
     @Autowired

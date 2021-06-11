@@ -2,6 +2,8 @@ package com.agh.EventarzGateway.feignClients;
 
 import com.agh.EventarzGateway.model.events.Event;
 import com.agh.EventarzGateway.model.inputs.EventForm;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient("eventarz-events")
+@Retry(name = "EventsClientRetry")
+@CircuitBreaker(name = "EventsClientCircuitBreaker")
 public interface EventsClient {
 
     @GetMapping(value = "/events", params = {"organizerUsername"})
@@ -34,8 +39,14 @@ public interface EventsClient {
     @GetMapping("/events")
     List<Event> getEventsByGroupUuid(@RequestParam String groupUuid);
 
+    @GetMapping(value = "/events", params = {"groupUuids", "counts"})
+    Map<String, Integer> getEventCountsByGroupUuids(@RequestParam String[] groupUuids, @RequestParam boolean counts);
+
     @PostMapping("/events")
     Event createEvent(@RequestBody EventForm eventForm);
+
+    @DeleteMapping(value = "/events", params = {"groupUuid"})
+    void deleteEventsByGroupUuid(@RequestParam String groupUuid);
 
     @DeleteMapping(value = "/events", params = {"groupUuid", "username"})
     void removeUserFromEventsByGroupUuid(@RequestParam String groupUuid, @RequestParam String username);

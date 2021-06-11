@@ -9,7 +9,6 @@ import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
 import com.agh.EventarzGateway.model.events.Event;
 import com.agh.EventarzGateway.model.groups.Group;
 import com.agh.EventarzGateway.model.inputs.GroupForm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -17,14 +16,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GroupService {
 
-    @Autowired
-    private GroupsClient groupsClient;
-    @Autowired
-    private EventsClient eventsClient;
+    private final GroupsClient groupsClient;
+    private final EventsClient eventsClient;
+
+    public GroupService(GroupsClient groupsClient, EventsClient eventsClient) {
+        this.groupsClient = groupsClient;
+        this.eventsClient = eventsClient;
+    }
 
     public List<GroupSearchedDTO> getMyGroups(Principal principal) {
         List<Group> groups = groupsClient.getMyGroups(principal.getName());
@@ -32,6 +35,7 @@ public class GroupService {
         for (Group group : groups) {
             groupSearchedDTOs.add(new GroupSearchedDTO(group));
         }
+        fillEventCountFields(groupSearchedDTOs);
         return groupSearchedDTOs;
     }
 
@@ -41,6 +45,7 @@ public class GroupService {
         for (Group group : groups) {
             groupSearchedDTOs.add(new GroupSearchedDTO(group));
         }
+        fillEventCountFields(groupSearchedDTOs);
         return groupSearchedDTOs;
     }
 
@@ -78,7 +83,7 @@ public class GroupService {
         if (!group.getFounderUsername().equals(principal.getName())) {
             throw new NotFounderException("User " + principal.getName() + " is not the founder of group " + uuid + " and cannot delete it.");
         }
-        eventsClient.deleteEvents(group.getEventUuids().toArray(new String[0]));
+        eventsClient.deleteEventsByGroupUuid(uuid);
         groupsClient.deleteGroup(uuid);
     }
 
@@ -98,14 +103,25 @@ public class GroupService {
         group = groupsClient.leaveGroup(uuid, principal.getName());
         eventsClient.removeUserFromEventsByGroupUuid(uuid, principal.getName());
         List<Event> events = eventsClient.getEventsByGroupUuid(group.getUuid());
+        // TODO: Don't reload events on group join/leave/edit?
         GroupDTO groupDTO = new GroupDTO(group, events);
         return groupDTO;
     }
 
     public void adminDeleteGroup(String uuid) {
-        // TODO: Just get the Uuids? Here and in deleteGroup
-        Group group = groupsClient.getGroup(uuid);
-        eventsClient.deleteEvents(group.getEventUuids().toArray(new String[0]));
+        eventsClient.deleteEventsByGroupUuid(uuid);
         groupsClient.deleteGroup(uuid);
+    }
+
+    // This shouldn't modify the argument but I'd need to make deep copies of all group objects. Same above.
+    private void fillEventCountFields(List<GroupSearchedDTO> groups) {
+        List<String> uuids = new ArrayList<>();
+        for (GroupSearchedDTO group : groups) {
+            uuids.add(group.getUuid());
+        }
+        Map<String, Integer> counts = eventsClient.getEventCountsByGroupUuids(uuids.toArray(new String[0]), true);
+        for (GroupSearchedDTO group : groups) {
+            group.setEventCount(counts.get(group.getUuid()));
+        }
     }
 }

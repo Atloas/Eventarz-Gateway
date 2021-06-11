@@ -6,7 +6,6 @@ import com.agh.EventarzGateway.model.dtos.GroupDTO;
 import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
 import com.agh.EventarzGateway.model.inputs.GroupForm;
 import com.agh.EventarzGateway.services.GroupService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,8 +26,11 @@ import java.util.List;
 @Secured("USER")
 public class GroupController {
 
-    @Autowired
-    private GroupService groupService;
+    private final GroupService groupService;
+
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
+    }
 
     @GetMapping("/groups")
     public List<GroupSearchedDTO> getMyGroups(Principal principal) {

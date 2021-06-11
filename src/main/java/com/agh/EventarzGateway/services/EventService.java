@@ -24,10 +24,13 @@ import java.util.Map;
 @Service
 public class EventService {
 
-    @Autowired
-    private EventsClient eventsClient;
-    @Autowired
-    private GroupsClient groupsClient;
+    private final EventsClient eventsClient;
+    private final GroupsClient groupsClient;
+
+    public EventService(EventsClient eventsClient, GroupsClient groupsClient) {
+        this.eventsClient = eventsClient;
+        this.groupsClient = groupsClient;
+    }
 
     public List<EventHomeDTO> getMyEvents(Principal principal) {
         List<Event> events = eventsClient.getMyEvents(principal.getName());
@@ -87,7 +90,6 @@ public class EventService {
             throw new NotOrganizerException("User " + principal.getName() + " is not the organizer of event " + uuid + " and cannot delete it.");
         }
         eventsClient.deleteEvents(new String[]{uuid});
-        groupsClient.removeEvents(event.getGroupUuid(), new String[]{uuid});
     }
 
     public EventDTO join(String uuid, Principal principal) throws UserNotInEventsGroupException, EventFullException {
@@ -127,9 +129,7 @@ public class EventService {
     }
 
     public void adminDeleteEvent(String uuid) {
-        String groupUuid = eventsClient.getGroupUuid(uuid);
         eventsClient.deleteEvents(new String[]{uuid});
-        groupsClient.removeEvents(groupUuid, new String[]{uuid});
     }
 
     private Map<String, Group> mapEventsToGroups(List<Event> events) {

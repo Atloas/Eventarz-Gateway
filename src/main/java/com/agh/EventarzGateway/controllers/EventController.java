@@ -7,7 +7,6 @@ import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
 import com.agh.EventarzGateway.model.inputs.EventForm;
 import com.agh.EventarzGateway.services.EventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,8 +26,11 @@ import java.util.List;
 @Secured("USER")
 public class EventController {
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
+
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
+    }
 
     @GetMapping("/events")
     public List<EventHomeDTO> getMy(Principal principal) {

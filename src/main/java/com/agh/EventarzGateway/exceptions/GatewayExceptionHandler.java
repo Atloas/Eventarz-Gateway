@@ -10,14 +10,23 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class GatewayExceptionHandler {
 
     @ExceptionHandler(FeignException.class)
-    public ResponseEntity handleFeignException(FeignException e) {
-        return ResponseEntity.status(HttpStatus.valueOf(e.status())).body(e.contentUTF8());
+    public ResponseEntity handleFeignException(FeignException e, HttpServletRequest request) {
+        if (e.status() == -1) {
+            ErrorDTO errorDTO = new ErrorDTO(
+                    HttpStatus.SERVICE_UNAVAILABLE.value(),
+                    HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                    request.getRequestURI(),
+                    "Something went wrong!"
+            );
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.valueOf(e.status())).body(e.contentUTF8());
+        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -31,7 +40,6 @@ public class GatewayExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
-                LocalDateTime.now().toString(),
                 builder.toString()
         );
 

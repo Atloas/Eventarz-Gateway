@@ -10,7 +10,6 @@ import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.services.EventService;
 import com.agh.EventarzGateway.services.GroupService;
 import com.agh.EventarzGateway.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +25,15 @@ import java.util.List;
 @Secured("ADMIN")
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private GroupService groupService;
-    @Autowired
-    private EventService eventService;
+    private final UserService userService;
+    private final GroupService groupService;
+    private final EventService eventService;
+
+    public AdminController(UserService userService, GroupService groupService, EventService eventService) {
+        this.userService = userService;
+        this.groupService = groupService;
+        this.eventService = eventService;
+    }
 
     // USERS
 

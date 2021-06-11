@@ -18,12 +18,15 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private UsersClient usersClient;
-    @Autowired
-    private GroupsClient groupsClient;
-    @Autowired
-    private EventsClient eventsClient;
+    private final UsersClient usersClient;
+    private final GroupsClient groupsClient;
+    private final EventsClient eventsClient;
+
+    public UserService(UsersClient usersClient, GroupsClient groupsClient, EventsClient eventsClient) {
+        this.usersClient = usersClient;
+        this.groupsClient = groupsClient;
+        this.eventsClient = eventsClient;
+    }
 
     public List<UserShortDTO> getUsersByRegex(String username) {
         List<User> users = usersClient.getUsersByName(username);

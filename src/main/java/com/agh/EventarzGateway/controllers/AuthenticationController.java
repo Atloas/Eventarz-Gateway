@@ -1,10 +1,10 @@
 package com.agh.EventarzGateway.controllers;
 
+import com.agh.EventarzGateway.exceptions.UserAlreadyExistsException;
 import com.agh.EventarzGateway.model.dtos.LoginResponseDTO;
 import com.agh.EventarzGateway.model.inputs.LoginForm;
 import com.agh.EventarzGateway.model.inputs.RegisterForm;
 import com.agh.EventarzGateway.services.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -19,12 +19,19 @@ import java.security.Principal;
 @RestController
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
+
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping("/register")
     public void register(@Valid @RequestBody RegisterForm registerForm) {
+        try {
         authenticationService.register(registerForm);
+        } catch (UserAlreadyExistsException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username taken!", e);
+        }
     }
 
     @PostMapping("/login")
