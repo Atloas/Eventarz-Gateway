@@ -2,10 +2,10 @@ package com.agh.EventarzGateway.services;
 
 import com.agh.EventarzGateway.config.JwtUtility;
 import com.agh.EventarzGateway.exceptions.UserAlreadyExistsException;
-import com.agh.EventarzGateway.feignClients.UsersClient;
+import com.agh.EventarzGateway.feignClients.UsersClientWrapper;
+import com.agh.EventarzGateway.model.dtos.LoginResponseDTO;
 import com.agh.EventarzGateway.model.inputs.LoginForm;
 import com.agh.EventarzGateway.model.inputs.RegisterForm;
-import com.agh.EventarzGateway.model.dtos.LoginResponseDTO;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class AuthenticationService implements UserDetailsService {
 
     // Autowired alongside other security stuff to avoid a circular dependency
     @Autowired
-    private UsersClient usersClient;
+    private UsersClientWrapper usersClient;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired

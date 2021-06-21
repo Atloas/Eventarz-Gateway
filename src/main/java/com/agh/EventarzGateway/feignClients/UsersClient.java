@@ -2,8 +2,6 @@ package com.agh.EventarzGateway.feignClients;
 
 import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.model.users.User;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient("eventarz-users")
-@Retry(name = "UsersClientRetry")
-@CircuitBreaker(name = "UsersClientCircuitBreaker")
 public interface UsersClient {
 
     @GetMapping("/users")
-    List<User> getUsersByName(@RequestParam String name);
+    List<User> findUsersByUsername(@RequestParam String username);
 
     @PostMapping("/users")
     void createUser(@RequestBody User user);

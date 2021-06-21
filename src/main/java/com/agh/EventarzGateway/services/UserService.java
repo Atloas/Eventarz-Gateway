@@ -1,15 +1,14 @@
 package com.agh.EventarzGateway.services;
 
-import com.agh.EventarzGateway.feignClients.EventsClient;
-import com.agh.EventarzGateway.feignClients.GroupsClient;
-import com.agh.EventarzGateway.feignClients.UsersClient;
+import com.agh.EventarzGateway.feignClients.EventsClientWrapper;
+import com.agh.EventarzGateway.feignClients.GroupsClientWrapper;
+import com.agh.EventarzGateway.feignClients.UsersClientWrapper;
 import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
 import com.agh.EventarzGateway.model.events.Event;
 import com.agh.EventarzGateway.model.groups.Group;
 import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.model.users.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,18 +17,18 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final UsersClient usersClient;
-    private final GroupsClient groupsClient;
-    private final EventsClient eventsClient;
+    private final UsersClientWrapper usersClient;
+    private final GroupsClientWrapper groupsClient;
+    private final EventsClientWrapper eventsClient;
 
-    public UserService(UsersClient usersClient, GroupsClient groupsClient, EventsClient eventsClient) {
+    public UserService(UsersClientWrapper usersClient, GroupsClientWrapper groupsClient, EventsClientWrapper eventsClient) {
         this.usersClient = usersClient;
         this.groupsClient = groupsClient;
         this.eventsClient = eventsClient;
     }
 
-    public List<UserShortDTO> getUsersByRegex(String username) {
-        List<User> users = usersClient.getUsersByName(username);
+    public List<UserShortDTO> findUsersByUsername(String username) {
+        List<User> users = usersClient.findUsersByUsername(username);
         List<UserShortDTO> userShortDTOs = new ArrayList<>();
         for (User user : users) {
             userShortDTOs.add(new UserShortDTO(user));
@@ -48,7 +47,7 @@ public class UserService {
         return userDTO;
     }
 
-    // TODO: Is it necessary to update this info on front?
+    // TODO: Is it necessary to send updated info to front?
     public UserDTO changeBannedStatus(String username, BanForm banForm) {
         User user = usersClient.changeBanStatus(username, banForm);
         List<Group> foundedGroups = groupsClient.getFoundedGroups(username);

@@ -2,8 +2,6 @@ package com.agh.EventarzGateway.feignClients;
 
 import com.agh.EventarzGateway.model.groups.Group;
 import com.agh.EventarzGateway.model.inputs.GroupForm;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient("eventarz-groups")
-@Retry(name = "UsersClientRetry")
-@CircuitBreaker(name = "UsersClientCircuitBreaker")
 public interface GroupsClient {
 
     @GetMapping(value = "/groups", params = {"founderUsername"})

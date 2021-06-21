@@ -4,7 +4,9 @@ import com.agh.EventarzGateway.exceptions.EventFullException;
 import com.agh.EventarzGateway.exceptions.NotOrganizerException;
 import com.agh.EventarzGateway.exceptions.UserNotInEventsGroupException;
 import com.agh.EventarzGateway.feignClients.EventsClient;
+import com.agh.EventarzGateway.feignClients.EventsClientWrapper;
 import com.agh.EventarzGateway.feignClients.GroupsClient;
+import com.agh.EventarzGateway.feignClients.GroupsClientWrapper;
 import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
 import com.agh.EventarzGateway.model.events.Event;
@@ -24,10 +26,10 @@ import java.util.Map;
 @Service
 public class EventService {
 
-    private final EventsClient eventsClient;
-    private final GroupsClient groupsClient;
+    private final EventsClientWrapper eventsClient;
+    private final GroupsClientWrapper groupsClient;
 
-    public EventService(EventsClient eventsClient, GroupsClient groupsClient) {
+    public EventService(EventsClientWrapper eventsClient, GroupsClientWrapper groupsClient) {
         this.eventsClient = eventsClient;
         this.groupsClient = groupsClient;
     }
@@ -67,7 +69,7 @@ public class EventService {
         return eventDTO;
     }
 
-    public EventDTO getEvent(String uuid, Principal principal) throws UserNotInEventsGroupException {
+    public EventDTO getEvent(String uuid, Principal principal) {
         Event event = eventsClient.getEvent(uuid);
         Group group = groupsClient.getGroup(event.getGroupUuid());
         return new EventDTO(event, group, group.checkIfUserIsInGroup(principal.getName()));
@@ -124,7 +126,7 @@ public class EventService {
 
     public EventDTO adminGetEvent(String uuid) {
         Event event = eventsClient.getEvent(uuid);
-        Group group = groupsClient.getGroup(event.getUuid());
+        Group group = groupsClient.getGroup(event.getGroupUuid());
         return new EventDTO(event, group, false);
     }
 

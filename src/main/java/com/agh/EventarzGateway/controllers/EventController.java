@@ -1,13 +1,9 @@
 package com.agh.EventarzGateway.controllers;
 
-import com.agh.EventarzGateway.exceptions.EventFullException;
-import com.agh.EventarzGateway.exceptions.NotOrganizerException;
-import com.agh.EventarzGateway.exceptions.UserNotInEventsGroupException;
 import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
 import com.agh.EventarzGateway.model.inputs.EventForm;
 import com.agh.EventarzGateway.services.EventService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -46,54 +41,31 @@ public class EventController {
 
     @PostMapping("/events")
     public EventDTO post(@Valid @RequestBody EventForm eventForm, Principal principal) {
-        try {
-            EventDTO eventDTO = eventService.postEvent(eventForm, principal);
-            return eventDTO;
-        } catch (UserNotInEventsGroupException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to post to this Group!", e);
-        }
+        EventDTO eventDTO = eventService.postEvent(eventForm, principal);
+        return eventDTO;
     }
 
     @GetMapping("/events/{uuid}")
     public EventDTO get(@PathVariable String uuid, Principal principal) {
-        try {
-            EventDTO eventDTO = eventService.getEvent(uuid, principal);
-            return eventDTO;
-        } catch (UserNotInEventsGroupException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view this Event!", e);
-        }
+        EventDTO eventDTO = eventService.getEvent(uuid, principal);
+        return eventDTO;
     }
 
     @PutMapping("/events/{uuid}")
     public EventDTO update(@Valid @RequestBody EventForm eventForm, @PathVariable String uuid, Principal principal) {
-        try {
-            EventDTO eventDTO = eventService.updateEvent(uuid, eventForm, principal);
-            return eventDTO;
-        } catch (NotOrganizerException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to edit this Event!", e);
-        }
+        EventDTO eventDTO = eventService.updateEvent(uuid, eventForm, principal);
+        return eventDTO;
     }
 
     @DeleteMapping("/events/{uuid}")
     public void delete(@PathVariable String uuid, Principal principal) {
-        try {
-            eventService.deleteEvent(uuid, principal);
-        } catch (NotOrganizerException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this Event!", e);
-        }
+        eventService.deleteEvent(uuid, principal);
     }
 
     @PostMapping("/events/{uuid}/participants")
     public EventDTO join(@PathVariable String uuid, Principal principal) {
-        try {
-            EventDTO eventDTO = eventService.join(uuid, principal);
-            return eventDTO;
-        } catch (UserNotInEventsGroupException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to join this Event!", e);
-        } catch (EventFullException e) {
-            // BAD_REQUEST?
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Event is already full!", e);
-        }
+        EventDTO eventDTO = eventService.join(uuid, principal);
+        return eventDTO;
     }
 
     // username is unused

@@ -3,7 +3,9 @@ package com.agh.EventarzGateway.services;
 import com.agh.EventarzGateway.exceptions.FounderAttemptingToLeaveException;
 import com.agh.EventarzGateway.exceptions.NotFounderException;
 import com.agh.EventarzGateway.feignClients.EventsClient;
+import com.agh.EventarzGateway.feignClients.EventsClientWrapper;
 import com.agh.EventarzGateway.feignClients.GroupsClient;
+import com.agh.EventarzGateway.feignClients.GroupsClientWrapper;
 import com.agh.EventarzGateway.model.dtos.GroupDTO;
 import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
 import com.agh.EventarzGateway.model.events.Event;
@@ -21,10 +23,10 @@ import java.util.Map;
 @Service
 public class GroupService {
 
-    private final GroupsClient groupsClient;
-    private final EventsClient eventsClient;
+    private final GroupsClientWrapper groupsClient;
+    private final EventsClientWrapper eventsClient;
 
-    public GroupService(GroupsClient groupsClient, EventsClient eventsClient) {
+    public GroupService(GroupsClientWrapper groupsClient, EventsClientWrapper eventsClient) {
         this.groupsClient = groupsClient;
         this.eventsClient = eventsClient;
     }

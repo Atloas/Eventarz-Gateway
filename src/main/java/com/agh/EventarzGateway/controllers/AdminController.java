@@ -38,8 +38,8 @@ public class AdminController {
     // USERS
 
     @GetMapping("admin/users")
-    public List<UserShortDTO> getUsersByRegex(@RequestParam String username) {
-        List<UserShortDTO> userShortDTOs = userService.getUsersByRegex(username);
+    public List<UserShortDTO> findUsersByUsername(@RequestParam String username) {
+        List<UserShortDTO> userShortDTOs = userService.findUsersByUsername(username);
         return userShortDTOs;
     }
 

@@ -19,7 +19,7 @@ management:
 
 resilience4j:
   circuitbreaker:
-#   This and the setting under retry makes an open circuit breaker fail before retry has a go, which is good.
+#   This and the similar setting under retry makes an open circuit breaker fail before retry has a go, which is good.
 #   Also means that it counts a retry as one request, no matter how many it actually tried, so I lowered request counts here.
     circuitBreakerAspectOrder: 1
     configs:
@@ -32,9 +32,9 @@ resilience4j:
         minimumNumberOfCalls: 3
         waitDurationInOpenState: 50s
         failureRateThreshold: 60
-#       TODO: Replace feign clients with a normal implementation to handle exceptions, because:
 #       FeignException can mean a 404, which is not a failure, like checkIfUsernameExists.
 #       On the other hand a failure to connect is also a FeignException, and Resilience4j can't distinguish them.
+#       Solved through a wrapper that translates retryable exceptions to a different type
         ignoreExceptions:
            - feign.FeignException
     instances:
