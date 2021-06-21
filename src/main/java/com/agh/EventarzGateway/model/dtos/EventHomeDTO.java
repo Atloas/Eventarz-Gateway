@@ -1,6 +1,7 @@
 package com.agh.EventarzGateway.model.dtos;
 
-import com.agh.EventarzGateway.model.Event;
+import com.agh.EventarzGateway.model.events.Event;
+import com.agh.EventarzGateway.model.groups.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,14 +19,14 @@ public class EventHomeDTO {
     private GroupShortDTO group;
     private boolean happened;
 
-    public EventHomeDTO(Event event) {
+    public EventHomeDTO(Event event, Group group) {
         this.uuid = event.getUuid();
         this.name = event.getName();
         this.description = event.getDescription();
         this.maxParticipants = event.getMaxParticipants();
-        this.participantCount = event.getParticipantCount();
+        this.participantCount = event.getParticipants().size();
         this.eventDate = event.getEventDate();
-        this.group = new GroupShortDTO(event.getGroup());
+        this.group = new GroupShortDTO(group);
         this.happened = event.isHappened();
     }
 }

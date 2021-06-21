@@ -10,3 +10,53 @@ eureka:
 server:
   error:
     includeMessage: always
+
+management:
+  endpoint.health.show-details: always
+  health:
+    circuitbreakers.enabled: true
+    retries.enabled: true
+
+resilience4j:
+  circuitbreaker:
+#   This and the similar setting under retry makes an open circuit breaker fail before retry has a go, which is good.
+#   Also means that it counts a retry as one request, no matter how many it actually tried, so I lowered request counts here.
+    circuitBreakerAspectOrder: 1
+    configs:
+      default:
+        registerHealthIndicator: true
+#       In seconds for slidingWindowType: TIME_BASED
+        slidingWindowSize: 60
+        permittedNumberOfCallsInHalfOpenState: 1
+        slidingWindowType: TIME_BASED
+        minimumNumberOfCalls: 3
+        waitDurationInOpenState: 50s
+        failureRateThreshold: 60
+#       FeignException can mean a 404, which is not a failure, like checkIfUsernameExists.
+#       On the other hand a failure to connect is also a FeignException, and Resilience4j can't distinguish them.
+#       Solved through a wrapper that translates retryable exceptions to a different type
+        ignoreExceptions:
+           - feign.FeignException
+    instances:
+      UsersClientCircuitBreaker:
+        baseConfig: default
+      EventsClientCircuitBreaker:
+        baseConfig: default
+      GroupsClientCircuitBreaker:
+        baseConfig: default
+  retry:
+    retryAspectOrder: 2
+    configs:
+      default:
+        registerHealthIndicator: true
+        maxAttempts: 2
+        waitDuration: 5s
+        ignoreExceptions:
+          - feign.FeignException
+    instances:
+      UsersClientRetry:
+        baseConfig: default
+      EventsClientRetry:
+        baseConfig: default
+      GroupsClientRetry:
+        baseConfig: default

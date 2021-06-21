@@ -1,13 +1,11 @@
 package com.agh.EventarzGateway.model.dtos;
 
-import com.agh.EventarzGateway.model.Event;
-import com.agh.EventarzGateway.model.Group;
-import com.agh.EventarzGateway.model.User;
+import com.agh.EventarzGateway.model.events.Event;
+import com.agh.EventarzGateway.model.groups.Group;
+import com.agh.EventarzGateway.model.groups.GroupMember;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,27 +18,26 @@ public class GroupDTO {
     private String name;
     private String description;
     private String createdDate;
+    private List<UserShortDTO> members;
+    private List<EventShortDTO> events;
+    private UserShortDTO founder;
 
-    public List<UserShortDTO> members;
-    public List<EventShortDTO> events;
-    public UserShortDTO founder;
-
-    public GroupDTO(Group group) {
+    public GroupDTO(Group group, List<Event> events) {
         this.uuid = group.getUuid();
         this.name = group.getName();
         this.description = group.getDescription();
         this.createdDate = group.getCreatedDate();
 
         this.members = new ArrayList<>();
-        for (User user: group.getMembers()) {
-            this.members.add(new UserShortDTO(user));
+        for (GroupMember member : group.getMembers()) {
+            this.members.add(new UserShortDTO(member.getUsername()));
         }
 
         this.events = new ArrayList<>();
-        for (Event event: group.getEvents()) {
+        for (Event event : events) {
             this.events.add(new EventShortDTO(event));
         }
 
-        this.founder = new UserShortDTO(group.getFounder());
+        this.founder = new UserShortDTO(group.getFounderUsername());
     }
 }

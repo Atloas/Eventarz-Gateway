@@ -1,7 +1,8 @@
 package com.agh.EventarzGateway.model.dtos;
 
-import com.agh.EventarzGateway.model.Event;
-import com.agh.EventarzGateway.model.User;
+import com.agh.EventarzGateway.model.events.Event;
+import com.agh.EventarzGateway.model.events.EventParticipant;
+import com.agh.EventarzGateway.model.groups.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,11 +21,12 @@ public class EventDTO {
     private String eventDate;
     private String publishedDate;
     private boolean happened;
+    private boolean allowed;
     private UserShortDTO organizer;
     private List<UserShortDTO> participants;
     private GroupShortDTO group;
 
-    public EventDTO(Event event) {
+    public EventDTO(Event event, Group group, boolean allowed) {
         this.uuid = event.getUuid();
         this.name = event.getName();
         this.description = event.getDescription();
@@ -32,11 +34,12 @@ public class EventDTO {
         this.eventDate = event.getEventDate();
         this.publishedDate = event.getPublishedDate();
         this.happened = event.isHappened();
-        this.organizer = new UserShortDTO(event.getOrganizer());
+        this.allowed = allowed;
+        this.organizer = new UserShortDTO(event.getOrganizerUsername());
         this.participants = new ArrayList<>();
-        for (User participant : event.getParticipants()) {
-            this.participants.add(new UserShortDTO(participant));
+        for (EventParticipant participant : event.getParticipants()) {
+            this.participants.add(new UserShortDTO(participant.getUsername()));
         }
-        this.group = new GroupShortDTO(event.getGroup());
+        this.group = new GroupShortDTO(group);
     }
 }

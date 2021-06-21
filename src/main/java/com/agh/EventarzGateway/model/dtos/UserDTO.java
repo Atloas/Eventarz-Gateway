@@ -1,8 +1,8 @@
 package com.agh.EventarzGateway.model.dtos;
 
-import com.agh.EventarzGateway.model.Event;
-import com.agh.EventarzGateway.model.Group;
-import com.agh.EventarzGateway.model.User;
+import com.agh.EventarzGateway.model.events.Event;
+import com.agh.EventarzGateway.model.groups.Group;
+import com.agh.EventarzGateway.model.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,28 +22,28 @@ public class UserDTO {
     private List<UserEventDTO> organizedEvents;
     private List<UserEventDTO> joinedEvents;
 
-    public UserDTO(User user) {
+    public UserDTO(User user, List<Group> foundedGroups, List<Group> joinedGroups, List<Event> organizedEvents, List<Event> joinedEvents) {
         this.username = user.getUsername();
         this.registerDate = user.getRegisterDate();
-        this.banned = user.getSecurityDetails().isBanned();
+        this.banned = user.isBanned();
 
         this.foundedGroups = new ArrayList<>();
-        for (Group group : user.getFoundedGroups()) {
+        for (Group group : foundedGroups) {
             this.foundedGroups.add(new UserGroupDTO(group));
         }
 
         this.joinedGroups = new ArrayList<>();
-        for (Group group : user.getGroups()) {
+        for (Group group : joinedGroups) {
             this.joinedGroups.add(new UserGroupDTO(group));
         }
 
         this.organizedEvents = new ArrayList<>();
-        for (Event event : user.getOrganizedEvents()) {
+        for (Event event : organizedEvents) {
             this.organizedEvents.add(new UserEventDTO(event));
         }
 
         this.joinedEvents = new ArrayList<>();
-        for (Event event : user.getEvents()) {
+        for (Event event : joinedEvents) {
             this.joinedEvents.add(new UserEventDTO(event));
         }
     }

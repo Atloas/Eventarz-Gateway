@@ -2,12 +2,10 @@ package com.agh.EventarzGateway.services;
 
 import com.agh.EventarzGateway.config.JwtUtility;
 import com.agh.EventarzGateway.exceptions.UserAlreadyExistsException;
-import com.agh.EventarzGateway.feignClients.DataClient;
-import com.agh.EventarzGateway.model.LoginForm;
-import com.agh.EventarzGateway.model.NewUser;
-import com.agh.EventarzGateway.model.RegisterForm;
-import com.agh.EventarzGateway.model.SecurityDetails;
+import com.agh.EventarzGateway.feignClients.UsersClientWrapper;
 import com.agh.EventarzGateway.model.dtos.LoginResponseDTO;
+import com.agh.EventarzGateway.model.inputs.LoginForm;
+import com.agh.EventarzGateway.model.inputs.RegisterForm;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,14 +22,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
 
+    // Autowired alongside other security stuff to avoid a circular dependency
     @Autowired
-    private DataClient dataClient;
+    private UsersClientWrapper usersClient;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -43,11 +42,12 @@ public class AuthenticationService implements UserDetailsService {
         if (checkIfUsernameExists(registerForm.getUsername())) {
             throw new UserAlreadyExistsException("There already is an account with username " + registerForm.getUsername() + "!");
         }
-        NewUser newUser = new NewUser();
-        newUser.setUsername(registerForm.getUsername());
-        newUser.setPasswordHash(passwordEncoder.encode(registerForm.getPassword()));
-        newUser.setRoles(Arrays.asList("USER"));
-        dataClient.createUser(newUser);
+        com.agh.EventarzGateway.model.users.User user = new com.agh.EventarzGateway.model.users.User(
+                registerForm.getUsername(),
+                passwordEncoder.encode(registerForm.getPassword()),
+                "USER"
+        );
+        usersClient.createUser(user);
     }
 
     public LoginResponseDTO login(LoginForm loginForm) {
@@ -62,34 +62,38 @@ public class AuthenticationService implements UserDetailsService {
         for (GrantedAuthority authority : user.getAuthorities()) {
             roles.add(authority.toString());
         }
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token, user.getUsername(), roles);
+        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token, user.getUsername(), roles.get(0));
         return loginResponseDTO;
     }
 
     public LoginResponseDTO refreshLogin(String username) {
-        SecurityDetails securityDetails = dataClient.getSecurityDetails(username);
+        com.agh.EventarzGateway.model.users.User user = usersClient.getUser(username);
         String token = jwtUtility.generateAccessToken(username);
-        return new LoginResponseDTO(token, username, securityDetails.getRoles());
+        return new LoginResponseDTO(token, username, user.getRole());
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // TODO: Rethink authentication data flow?
-        SecurityDetails securityDetails = dataClient.getSecurityDetails(username);
-        if (securityDetails == null) {
-            throw new UsernameNotFoundException("No user found for username " + username);
+        try {
+            com.agh.EventarzGateway.model.users.User user = usersClient.getUser(username);
+            return new User(
+                    username,
+                    user.getPasswordHash(), true, true,
+                    true, !user.isBanned(),
+                    getAuthorities(Collections.singletonList(user.getRole()))
+            );
+        } catch (FeignException e) {
+            if (e.status() == HttpStatus.NOT_FOUND.value()) {
+                throw new UsernameNotFoundException("No user found for username " + username);
+            } else {
+                throw e;
+            }
         }
-        return new User(
-                username,
-                securityDetails.getPasswordHash(), true, true,
-                true, !securityDetails.isBanned(),
-                getAuthorities(securityDetails.getRoles())
-        );
     }
 
     private boolean checkIfUsernameExists(String username) {
         try {
-            dataClient.checkIfUserExists(username);
+            usersClient.checkIfUserExists(username);
             return true;
         } catch (FeignException e) {
             if (e.status() != HttpStatus.NOT_FOUND.value()) {

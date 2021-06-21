@@ -1,4 +1,4 @@
-package com.agh.EventarzGateway.model;
+package com.agh.EventarzGateway.model.inputs;
 
 import com.agh.EventarzGateway.model.validators.FutureDate;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class EventForm {
     @Size(min = 5, message = "Name too short!")
-    @Size(max = 64, message = "Name too long!")
+    @Size(max = 32, message = "Name too long!")
     @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]+", message = "Name contains invalid characters!")
     private String name;
     @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]*", message = "Description contains invalid characters!")
@@ -28,10 +28,12 @@ public class EventForm {
     @FutureDate(message = "Date is invalid!")
     private String eventDate;
     private boolean participate;
-    // Starts empty, then filled with principal's name
+    // Filled by Gateway with principal.getName()
     private String organizerUsername;
     @NotBlank(message = "Group uuid is blank!")
     private String groupUuid;
+    // Filled by Gateway
+    private String publishedDate;
 
     public EventForm(EventForm that) {
         this.name = that.name;

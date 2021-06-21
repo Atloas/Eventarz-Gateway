@@ -1,16 +1,15 @@
 package com.agh.EventarzGateway.controllers;
 
-import com.agh.EventarzGateway.model.BanForm;
 import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
 import com.agh.EventarzGateway.model.dtos.GroupDTO;
 import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
 import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
+import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.services.EventService;
 import com.agh.EventarzGateway.services.GroupService;
 import com.agh.EventarzGateway.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,18 +25,21 @@ import java.util.List;
 @Secured("ADMIN")
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private GroupService groupService;
-    @Autowired
-    private EventService eventService;
+    private final UserService userService;
+    private final GroupService groupService;
+    private final EventService eventService;
+
+    public AdminController(UserService userService, GroupService groupService, EventService eventService) {
+        this.userService = userService;
+        this.groupService = groupService;
+        this.eventService = eventService;
+    }
 
     // USERS
 
     @GetMapping("admin/users")
-    public List<UserShortDTO> getUsersByRegex(@RequestParam String username) {
-        List<UserShortDTO> userShortDTOs = userService.getUsersByRegex(username);
+    public List<UserShortDTO> findUsersByUsername(@RequestParam String username) {
+        List<UserShortDTO> userShortDTOs = userService.findUsersByUsername(username);
         return userShortDTOs;
     }
 
@@ -68,16 +70,15 @@ public class AdminController {
     }
 
     @DeleteMapping("admin/groups/{uuid}")
-    public String adminDeleteGroup(@PathVariable String uuid) {
-        String oldUuid = groupService.adminDeleteGroup(uuid);
-        return oldUuid;
+    public void adminDeleteGroup(@PathVariable String uuid) {
+        groupService.adminDeleteGroup(uuid);
     }
 
     // EVENTS
 
     @GetMapping("admin/events")
     public List<EventHomeDTO> getEventsByRegex(@RequestParam String name) {
-        List<EventHomeDTO> eventHomeDTOs = eventService.getEventsByRegex(name);
+        List<EventHomeDTO> eventHomeDTOs = eventService.getEventsByName(name);
         return eventHomeDTOs;
     }
 
@@ -88,8 +89,7 @@ public class AdminController {
     }
 
     @DeleteMapping("admin/events/{uuid}")
-    public String adminDeleteEvent(@PathVariable String uuid) {
-        String oldUuid = eventService.adminDeleteEvent(uuid);
-        return oldUuid;
+    public void adminDeleteEvent(@PathVariable String uuid) {
+        eventService.adminDeleteEvent(uuid);
     }
 }

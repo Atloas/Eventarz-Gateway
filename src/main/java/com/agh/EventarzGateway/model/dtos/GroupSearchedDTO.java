@@ -1,6 +1,6 @@
 package com.agh.EventarzGateway.model.dtos;
 
-import com.agh.EventarzGateway.model.Group;
+import com.agh.EventarzGateway.model.groups.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,6 @@ public class GroupSearchedDTO {
         this.uuid = group.getUuid();
         this.name = group.getName();
         this.description = group.getDescription();
-        this.memberCount = group.getMemberCount();
-        this.eventCount = group.getEventCount();
+        this.memberCount = group.getMembers().size();
     }
 }
