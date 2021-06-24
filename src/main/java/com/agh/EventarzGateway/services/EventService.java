@@ -3,19 +3,15 @@ package com.agh.EventarzGateway.services;
 import com.agh.EventarzGateway.exceptions.EventFullException;
 import com.agh.EventarzGateway.exceptions.NotOrganizerException;
 import com.agh.EventarzGateway.exceptions.UserNotInEventsGroupException;
-import com.agh.EventarzGateway.feignClients.EventsClient;
 import com.agh.EventarzGateway.feignClients.EventsClientWrapper;
-import com.agh.EventarzGateway.feignClients.GroupsClient;
 import com.agh.EventarzGateway.feignClients.GroupsClientWrapper;
 import com.agh.EventarzGateway.model.dtos.EventDTO;
 import com.agh.EventarzGateway.model.dtos.EventHomeDTO;
 import com.agh.EventarzGateway.model.events.Event;
 import com.agh.EventarzGateway.model.groups.Group;
 import com.agh.EventarzGateway.model.inputs.EventForm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,8 +30,8 @@ public class EventService {
         this.groupsClient = groupsClient;
     }
 
-    public List<EventHomeDTO> getMyEvents(Principal principal) {
-        List<Event> events = eventsClient.getMyEvents(principal.getName());
+    public List<EventHomeDTO> getMyEvents(String username) {
+        List<Event> events = eventsClient.getMyEvents(username);
         Map<String, Group> eventUuidToGroup = this.mapEventsToGroups(events);
         List<EventHomeDTO> eventHomeDTOs = new ArrayList<>();
         for (Event event : events) {
@@ -44,8 +40,8 @@ public class EventService {
         return eventHomeDTOs;
     }
 
-    public List<EventHomeDTO> getHomeEvents(Principal principal) {
-        List<Event> events = eventsClient.getHomeEvents(principal.getName(), true);
+    public List<EventHomeDTO> getHomeEvents(String username) {
+        List<Event> events = eventsClient.getHomeEvents(username, true);
         Map<String, Group> eventUuidToGroup = this.mapEventsToGroups(events);
         List<EventHomeDTO> eventHomeDTOs = new ArrayList<>();
         for (Event event : events) {
@@ -54,31 +50,31 @@ public class EventService {
         return eventHomeDTOs;
     }
 
-    public EventDTO postEvent(EventForm eventForm, Principal principal) throws UserNotInEventsGroupException {
+    public EventDTO postEvent(EventForm eventForm, String username) throws UserNotInEventsGroupException {
         Group group = groupsClient.getGroup(eventForm.getGroupUuid());
-        if (!group.checkIfUserIsInGroup(principal.getName())) {
-            throw new UserNotInEventsGroupException("User " + principal.getName() + " is not in the target group!");
+        if (!group.checkIfUserIsInGroup(username)) {
+            throw new UserNotInEventsGroupException("User " + username + " is not in the target group!");
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         String publishedDate = LocalDateTime.now().format(dtf);
         EventForm completedForm = new EventForm(eventForm);
-        completedForm.setOrganizerUsername(principal.getName());
+        completedForm.setOrganizerUsername(username);
         completedForm.setPublishedDate(publishedDate);
         Event event = eventsClient.createEvent(completedForm);
         EventDTO eventDTO = new EventDTO(event, group, true);
         return eventDTO;
     }
 
-    public EventDTO getEvent(String uuid, Principal principal) {
+    public EventDTO getEvent(String uuid, String username) {
         Event event = eventsClient.getEvent(uuid);
         Group group = groupsClient.getGroup(event.getGroupUuid());
-        return new EventDTO(event, group, group.checkIfUserIsInGroup(principal.getName()));
+        return new EventDTO(event, group, group.checkIfUserIsInGroup(username));
     }
 
-    public EventDTO updateEvent(String uuid, EventForm eventForm, Principal principal) throws NotOrganizerException {
+    public EventDTO updateEvent(String uuid, EventForm eventForm, String username) throws NotOrganizerException {
         Event event = eventsClient.getEvent(uuid);
-        if (!event.getOrganizerUsername().equals(principal.getName())) {
-            throw new NotOrganizerException("User " + principal.getName() + " is not the organizer of event " + uuid + "!");
+        if (!event.getOrganizerUsername().equals(username)) {
+            throw new NotOrganizerException("User " + username + " is not the organizer of event " + uuid + "!");
         }
         event = eventsClient.updateEvent(uuid, eventForm);
         Group group = groupsClient.getGroup(event.getGroupUuid());
@@ -86,30 +82,30 @@ public class EventService {
         return eventDTO;
     }
 
-    public void deleteEvent(String uuid, Principal principal) throws NotOrganizerException {
+    public void deleteEvent(String uuid, String username) throws NotOrganizerException {
         Event event = eventsClient.getEvent(uuid);
-        if (!event.getOrganizerUsername().equals(principal.getName())) {
-            throw new NotOrganizerException("User " + principal.getName() + " is not the organizer of event " + uuid + " and cannot delete it.");
+        if (!event.getOrganizerUsername().equals(username)) {
+            throw new NotOrganizerException("User " + username + " is not the organizer of event " + uuid + " and cannot delete it.");
         }
         eventsClient.deleteEvents(new String[]{uuid});
     }
 
-    public EventDTO join(String uuid, Principal principal) throws UserNotInEventsGroupException, EventFullException {
+    public EventDTO join(String uuid, String username) throws UserNotInEventsGroupException, EventFullException {
         Event event = eventsClient.getEvent(uuid);
         Group group = groupsClient.getGroup(event.getGroupUuid());
-        if (!group.checkIfUserIsInGroup(principal.getName())) {
-            throw new UserNotInEventsGroupException("User " + principal.getName() + " is not in the group of event " + uuid + "!");
+        if (!group.checkIfUserIsInGroup(username)) {
+            throw new UserNotInEventsGroupException("User " + username + " is not in the group of event " + uuid + "!");
         }
         if (event.getParticipants().size() < event.getMaxParticipants()) {
-            event = eventsClient.joinEvent(uuid, principal.getName());
+            event = eventsClient.joinEvent(uuid, username);
             return new EventDTO(event, group, true);
         } else {
             throw new EventFullException("This event is already full!");
         }
     }
 
-    public EventDTO leave(String uuid, Principal principal) {
-        Event event = eventsClient.leaveEvent(uuid, principal.getName());
+    public EventDTO leave(String uuid, String username) {
+        Event event = eventsClient.leaveEvent(uuid, username);
         Group group = groupsClient.getGroup(event.getGroupUuid());
         return new EventDTO(event, group, true);
     }

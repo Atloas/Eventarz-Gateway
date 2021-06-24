@@ -1,7 +1,6 @@
 package com.agh.EventarzGateway.feignClients;
 
 import com.agh.EventarzGateway.exceptions.MicroserviceConnectionException;
-import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.model.users.User;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -63,9 +62,9 @@ public class UsersClientWrapper {
         }
     }
 
-    public User changeBanStatus(String username, BanForm banForm) {
+    public User changeBanStatus(String username, boolean banned) {
         try {
-            return usersClient.changeBanStatus(username, banForm);
+            return usersClient.changeBanStatus(username, banned);
         } catch (FeignException e) {
             throw handleFeignException(e);
         }

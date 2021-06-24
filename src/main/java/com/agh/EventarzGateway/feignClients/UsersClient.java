@@ -1,6 +1,5 @@
 package com.agh.EventarzGateway.feignClients;
 
-import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.model.users.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,5 +33,5 @@ public interface UsersClient {
     void checkIfUserExists(@PathVariable String username);
 
     @PutMapping("users/{username}/securityDetails/banned")
-    User changeBanStatus(@PathVariable String username, @RequestBody BanForm banForm);
+    User changeBanStatus(@PathVariable String username, @RequestBody boolean banned);
 }

@@ -45,7 +45,7 @@ public class AuthenticationService implements UserDetailsService {
         com.agh.EventarzGateway.model.users.User user = new com.agh.EventarzGateway.model.users.User(
                 registerForm.getUsername(),
                 passwordEncoder.encode(registerForm.getPassword()),
-                "USER"
+                "ROLE_USER"
         );
         usersClient.createUser(user);
     }

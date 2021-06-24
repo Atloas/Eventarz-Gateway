@@ -1,12 +1,14 @@
 package com.agh.EventarzGateway.config;
 
 import com.agh.EventarzGateway.services.AuthenticationService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -18,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.google.common.collect.ImmutableSet.of;
-import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Component
@@ -41,28 +41,37 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+
         // Get jwt token and validate
-        final String token = header.split(" ")[1].trim();
-        if (!jwtUtility.validate(token)) {
-            chain.doFilter(request, response);
+        final String tokenString = header.split(" ")[1].trim();
+        Jwt token = null;
+        try {
+            token = jwtUtility.decode(tokenString);
+        } catch (JwtException e) {
+            // Token invalid or expired
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token!");
             return;
         }
 
-        // Get user identity and set it on the spring security context
-        // TODO: Should this call the DB for data every time? Only call on non-GET requests?
-
-        String username = jwtUtility.getUsername(token);
+        Claims claims = (Claims) token.getBody();
+        String username = claims.getSubject();
         User userDetails;
         try {
             userDetails = (User) authenticationService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            userDetails = null;
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token!");
+            return;
+        }
+
+        if (!userDetails.isAccountNonLocked()) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token!");
+            return;
         }
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
-                ofNullable(userDetails).map(UserDetails::getAuthorities).orElse(of())
+                userDetails.getAuthorities()
         );
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -6,11 +6,10 @@ import com.agh.EventarzGateway.model.dtos.GroupDTO;
 import com.agh.EventarzGateway.model.dtos.GroupSearchedDTO;
 import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
-import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.services.EventService;
 import com.agh.EventarzGateway.services.GroupService;
 import com.agh.EventarzGateway.services.UserService;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@Secured("ADMIN")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
     private final UserService userService;
@@ -50,10 +49,11 @@ public class AdminController {
     }
 
     @PutMapping("admin/users/{username}/banned")
-    public UserDTO changeBannedStatus(@RequestBody BanForm banForm, @PathVariable String username) {
-        UserDTO userDTO = userService.changeBannedStatus(username, banForm);
+    public UserDTO changeBannedStatus(@RequestBody boolean banned, @PathVariable String username) {
+        UserDTO userDTO = userService.changeBannedStatus(username, banned);
         return userDTO;
     }
+
 
     // GROUPS
 
@@ -77,7 +77,7 @@ public class AdminController {
     // EVENTS
 
     @GetMapping("admin/events")
-    public List<EventHomeDTO> getEventsByRegex(@RequestParam String name) {
+    public List<EventHomeDTO> getEventsByName(@RequestParam String name) {
         List<EventHomeDTO> eventHomeDTOs = eventService.getEventsByName(name);
         return eventHomeDTOs;
     }

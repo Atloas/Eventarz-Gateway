@@ -7,7 +7,6 @@ import com.agh.EventarzGateway.model.dtos.UserDTO;
 import com.agh.EventarzGateway.model.dtos.UserShortDTO;
 import com.agh.EventarzGateway.model.events.Event;
 import com.agh.EventarzGateway.model.groups.Group;
-import com.agh.EventarzGateway.model.inputs.BanForm;
 import com.agh.EventarzGateway.model.users.User;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +47,8 @@ public class UserService {
     }
 
     // TODO: Is it necessary to send updated info to front?
-    public UserDTO changeBannedStatus(String username, BanForm banForm) {
-        User user = usersClient.changeBanStatus(username, banForm);
+    public UserDTO changeBannedStatus(String username, boolean banned) {
+        User user = usersClient.changeBanStatus(username, banned);
         List<Group> foundedGroups = groupsClient.getFoundedGroups(username);
         List<Group> joinedGroups = groupsClient.getJoinedGroups(username);
         List<Event> organizedEvents = eventsClient.getOrganizedEvents(username);
