@@ -1,11 +1,13 @@
 package com.agh.EventarzGateway.config;
 
+import com.agh.EventarzGateway.model.dtos.ErrorDTO;
 import com.agh.EventarzGateway.services.AuthenticationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -49,7 +51,13 @@ public class JwtFilter extends OncePerRequestFilter {
             token = jwtUtility.decode(tokenString);
         } catch (JwtException e) {
             // Token invalid or expired
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token!");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(new ErrorDTO(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    request.getRequestURI(),
+                    "Token invalid!"
+            ).toJson());
             return;
         }
 
@@ -59,12 +67,24 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             userDetails = (User) authenticationService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token!");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(new ErrorDTO(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    request.getRequestURI(),
+                    "Token invalid!"
+            ).toJson());
             return;
         }
 
         if (!userDetails.isAccountNonLocked()) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token!");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(new ErrorDTO(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    request.getRequestURI(),
+                    "Account locked!"
+            ).toJson());
             return;
         }
 

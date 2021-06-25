@@ -1,5 +1,7 @@
 package com.agh.EventarzGateway.model.dtos;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,5 +22,10 @@ public class ErrorDTO {
         this.path = path;
         this.timestamp = LocalDateTime.now().toString();
         this.message = message;
+    }
+
+    public String toJson() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(this);
     }
 }
