@@ -22,8 +22,7 @@ public class GatewayExceptionHandler {
     public ResponseEntity handleFeignException(FeignException e, HttpServletRequest request) {
         if (e.status() == -1) {
             ErrorDTO errorDTO = new ErrorDTO(
-                    HttpStatus.SERVICE_UNAVAILABLE.value(),
-                    HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                    HttpStatus.SERVICE_UNAVAILABLE,
                     request.getRequestURI(),
                     "Something went wrong!"
             );
@@ -36,8 +35,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(MicroserviceConnectionException.class)
     public ResponseEntity<ErrorDTO> handleMicroserviceConnectionException(MicroserviceConnectionException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.SERVICE_UNAVAILABLE.value(),
-                HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                HttpStatus.SERVICE_UNAVAILABLE,
                 request.getRequestURI(),
                 "Service unavailable!"
         );
@@ -48,8 +46,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(FounderAttemptingToLeaveException.class)
     public ResponseEntity<ErrorDTO> handleFounderAttemptingToLeaveException(FounderAttemptingToLeaveException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                HttpStatus.FORBIDDEN,
                 request.getRequestURI(),
                 "You cannot leave Groups you founded!"
         );
@@ -60,8 +57,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(NotFounderException.class)
     public ResponseEntity<ErrorDTO> handleNotFounderException(NotFounderException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                HttpStatus.FORBIDDEN,
                 request.getRequestURI(),
                 "You are not the founder of this Group!"
         );
@@ -72,8 +68,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(UserNotInEventsGroupException.class)
     public ResponseEntity<ErrorDTO> handleUserNotInEventsGroupException(UserNotInEventsGroupException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                HttpStatus.FORBIDDEN,
                 request.getRequestURI(),
                 "You are not allowed to post to this Group!"
         );
@@ -84,8 +79,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(NotOrganizerException.class)
     public ResponseEntity<ErrorDTO> handleNotOrganizerException(NotOrganizerException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                HttpStatus.FORBIDDEN,
                 request.getRequestURI(),
                 "You are not the organizer of this Event!"
         );
@@ -96,8 +90,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(EventFullException.class)
     public ResponseEntity<ErrorDTO> handleEventFullException(EventFullException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.BAD_REQUEST,
                 request.getRequestURI(),
                 "This Event is already full!"
         );
@@ -108,8 +101,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorDTO> handleUserAlreadyExistsException(UserAlreadyExistsException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.BAD_REQUEST,
                 request.getRequestURI(),
                 "Username taken!"
         );
@@ -120,8 +112,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorDTO> handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                HttpStatus.UNAUTHORIZED,
                 request.getRequestURI(),
                 "Incorrect username or password!"
         );
@@ -132,8 +123,7 @@ public class GatewayExceptionHandler {
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ErrorDTO> handleLockedException(LockedException e, HttpServletRequest request) {
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                HttpStatus.UNAUTHORIZED,
                 request.getRequestURI(),
                 "Account locked!"
         );
@@ -150,8 +140,7 @@ public class GatewayExceptionHandler {
         }
 
         ErrorDTO errorDTO = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.BAD_REQUEST,
                 request.getRequestURI(),
                 builder.toString()
         );

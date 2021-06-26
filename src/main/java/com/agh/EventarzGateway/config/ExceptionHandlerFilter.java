@@ -21,8 +21,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (RuntimeException e) {
 
             ErrorDTO errorDTO = new ErrorDTO(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR,
                     request.getRequestURI(),
                     "Something went wrong!"
             );

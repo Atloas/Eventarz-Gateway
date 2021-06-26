@@ -53,8 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             // Token invalid or expired
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(new ErrorDTO(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    HttpStatus.UNAUTHORIZED,
                     request.getRequestURI(),
                     "Token invalid!"
             ).toJson());
@@ -69,8 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (UsernameNotFoundException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(new ErrorDTO(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    HttpStatus.UNAUTHORIZED,
                     request.getRequestURI(),
                     "Token invalid!"
             ).toJson());
@@ -80,8 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (!userDetails.isAccountNonLocked()) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(new ErrorDTO(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    HttpStatus.UNAUTHORIZED,
                     request.getRequestURI(),
                     "Account locked!"
             ).toJson());
