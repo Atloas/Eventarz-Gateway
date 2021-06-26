@@ -28,7 +28,7 @@ public class EventForm {
     @FutureDate(message = "Date is invalid!")
     private String eventDate;
     private boolean participate;
-    // Filled by Gateway with principal.getName()
+    @NotBlank(message = "Organizer username is blank!")
     private String organizerUsername;
     @NotBlank(message = "Group uuid is blank!")
     private String groupUuid;

@@ -3,7 +3,6 @@ package com.agh.EventarzGateway.model.groups;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

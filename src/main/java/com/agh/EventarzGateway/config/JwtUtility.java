@@ -18,8 +18,6 @@ public class JwtUtility {
     private final String jwtSecret = "eventarzJwtSecret";
     private final String jwtIssuer = "eventarz.agh.com";
 
-//    private final Logger logger;
-
     public String generateAccessToken(User user) {
         String username = user.getUsername();
         return generateAccessToken(username);

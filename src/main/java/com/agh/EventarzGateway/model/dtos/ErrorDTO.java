@@ -29,6 +29,7 @@ public class ErrorDTO {
         this.status = status.value();
         this.error = status.getReasonPhrase();
         this.path = path;
+        this.timestamp = LocalDateTime.now().toString();
         this.message = message;
     }
 

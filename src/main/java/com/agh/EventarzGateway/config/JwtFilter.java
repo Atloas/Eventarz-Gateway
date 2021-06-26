@@ -60,6 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Get user name from token and then pull data from database
         Claims claims = (Claims) token.getBody();
         String username = claims.getSubject();
         User userDetails;
@@ -75,6 +76,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Check if user is banned
         if (!userDetails.isAccountNonLocked()) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(new ErrorDTO(
@@ -85,6 +87,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Do Spring authentication
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,

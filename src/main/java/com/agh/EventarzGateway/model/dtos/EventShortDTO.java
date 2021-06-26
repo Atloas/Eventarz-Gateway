@@ -15,7 +15,6 @@ public class EventShortDTO {
     private int maxParticipants;
     private int participantCount;
     private String eventDate;
-    private GroupShortDTO group;
     private boolean happened;
 
     public EventShortDTO(Event event) {

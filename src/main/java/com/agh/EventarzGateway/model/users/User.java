@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +15,7 @@ public class User {
     private String role;
     private boolean banned;
 
-    public User (String username, String passwordHash, String role) {
+    public User(String username, String passwordHash, String role) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String registerDate = LocalDate.now().format(dtf);
         this.username = username;

@@ -22,6 +22,7 @@ public class GroupService {
 
     private final GroupsClientWrapper groupsClient;
     private final EventsClientWrapper eventsClient;
+
     public GroupService(GroupsClientWrapper groupsClient, EventsClientWrapper eventsClient) {
         this.groupsClient = groupsClient;
         this.eventsClient = eventsClient;

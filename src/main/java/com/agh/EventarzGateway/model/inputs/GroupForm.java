@@ -19,7 +19,7 @@ public class GroupForm {
     @Size(max = 1024, message = "Description is too long!")
     @Pattern(regexp = "[a-zA-Z0-9\\s\\-:().,!?$&*'\"]*", message = "Description contains invalid characters!")
     private String description;
-    // Filled by Gateway with principal.getName()
+    @NotBlank(message = "Founder username is blank!")
     private String founderUsername;
     // Filled by Gateway
     private String createdDate;
