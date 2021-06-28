@@ -6,7 +6,7 @@ metadata:
     app: eventarz-gateway
   name: eventarz-gateway
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: eventarz-gateway
@@ -18,7 +18,7 @@ spec:
         app: eventarz-gateway
     spec:
       containers:
-        - image: eventarzregistry.azurecr.io/eventarz-gateway:latest
+        - image: eventarzcontainerregistry.azurecr.io/eventarz-gateway:latest
           name: eventarz-gateway
           resources: {}
 status: {}
