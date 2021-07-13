@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 // A wrapper class to fire EventsClient methods but also translate thrown exceptions to adjust Resilience4j behaviour.
+// Using Resilience4j annotations directly on the feign clients doesn't work.
+// Using them for service methods has unwanted behaviour if a methods communicates with two services but the second one is unavailable.
 
 @Component
 @Retry(name = "EventsClientRetry")

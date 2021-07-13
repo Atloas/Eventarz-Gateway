@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 // A wrapper class to fire GroupsClient methods but also translate thrown exceptions to adjust Resilience4j behaviour.
+// Using Resilience4j annotations directly on the feign clients doesn't work.
+// Using them for service methods has unwanted behaviour if a methods communicates with two services but the second one is unavailable.
 
 @Component
 @Retry(name = "UsersClientRetry")

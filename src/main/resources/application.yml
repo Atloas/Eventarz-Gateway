@@ -60,3 +60,13 @@ resilience4j:
         baseConfig: default
       GroupsClientRetry:
         baseConfig: default
+
+logging:
+  level:
+    com.agh.EventarzGateway.feignClients.UsersClient: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: BASIC

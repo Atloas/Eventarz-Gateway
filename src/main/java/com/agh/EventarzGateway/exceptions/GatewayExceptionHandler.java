@@ -2,6 +2,7 @@ package com.agh.EventarzGateway.exceptions;
 
 import com.agh.EventarzGateway.model.dtos.ErrorDTO;
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -85,6 +86,13 @@ public class GatewayExceptionHandler {
 
         return getResponse(HttpStatus.BAD_REQUEST, request.getRequestURI(), builder.toString());
     }
+
+    // Circuit breaker open
+    @ExceptionHandler(CallNotPermittedException.class)
+    public ResponseEntity<ErrorDTO> handleCallNotPermittedException(CallNotPermittedException exception, HttpServletRequest request) {
+        return getResponse(HttpStatus.SERVICE_UNAVAILABLE, request.getRequestURI(), "Service unavailable!");
+    }
+
 
     private ResponseEntity<ErrorDTO> getResponse(HttpStatus status, String requestURI, String message) {
         ErrorDTO errorDTO = new ErrorDTO(status, requestURI, message);
