@@ -22,7 +22,7 @@ The application was written in Java, using the Spring framework, in a monolithic
 
 All microservices of the new application were also written in Java, using Spring.
 
-#### Necessary changes
+### Necessary changes
 
 To realize the thesis I needed to:
 
@@ -61,7 +61,7 @@ It routes incoming requests between Application and Gateway based on their addre
 I added Resilience4j's Retry and Circuit Breaker mechanisms to all instances of communication between Gateway and data services, and between data services and their databases.
 This required additional changes as Feign Client throws a single kind of exception no matter the issue, so a 404 error was treated the same as a connection failure, but a 404 won't go away if the request is repeated. 
 
-#### Additional changes
+### Additional changes
 
 Beyond simply utilizing the necessary technologies, I also decided to:
 
@@ -86,7 +86,7 @@ Since I had a good opportunity, I wanted to touch on the DevOps aspects of devel
 
 I used GitHub Actions to continuously build Docker container images of the microservices, and deploy them to a Kubernetes cluster set up using Azure.
 
-#### Conclusion
+### Conclusion
 
 In the end my application was found acceptable, although there is certainly room for improvement.
 The lack of testing is the most obvious shortcoming, but beyond that the frontend could probably use a rewrite, despite using fault tolerance database consistency is not guaranteed, and the code could be improved from a SOLID programming viewpoint.
