@@ -32,9 +32,9 @@ resilience4j:
         minimumNumberOfCalls: 3
         waitDurationInOpenState: 50s
         failureRateThreshold: 60
-#       FeignException can mean a 404, which is not a failure, like checkIfUsernameExists.
+#       FeignException can mean a 404, which is not a failure, like the result of checkIfUsernameExists.
 #       On the other hand a failure to connect is also a FeignException, and Resilience4j can't distinguish them.
-#       Solved through a wrapper that translates retryable exceptions to a different type
+#       Solved through a wrapper that translates "retryable" exceptions to a different type.
         ignoreExceptions:
            - feign.FeignException
     instances:
