@@ -38,7 +38,7 @@ I ended up with 7 microservices:
 - EurekaServer - Central Eureka server for service discovery.
 - ZuulServer - Reverse proxy and load balancer.
 
-The image below shows the final architecture of the application, including planned instance count: two instances each of Gateway, Users, Groups and events, one each for the rest.
+The image below shows the final architecture of the application, including planned instance count: two instances each of Gateway, Users, Groups and Events, and one each for the rest.
 
 ![Architecture](docs/EventarzMicroservices.png)
 
@@ -72,12 +72,12 @@ I redid the frontend of the application from a multi-page application into a sin
 #### 7. Switch databases to MS SQL Server.
 
 The Neo4j graph database used in the original project turned out to be problematic in conjunction with the new architecture.
-Graph databases are suited for heavily interconnected data, which is true for this application, but since I wanted to split data access into a separate microservice per data type, having a separate database for each removes those connections.
-On the other hand, using a single database for three microservices goes against the idea of microservices. In the end I decided to switch databases, and used MS SQL Server.
+Graph databases are suited for heavily interconnected data, which is true for this application, but since I wanted to split data access into separate microservices per data type, having a separate database for each removes those connections.
+On the other hand, using a single database for three microservices goes against the idea of microservices, so in the end I decided to switch databases, and used MS SQL Server.
 
 #### 8. Implement JWT authentication.
 
-Simple sessions used in the original application aren't suitable to be used behind load balancers, as there is no guarantee that two subsequent requests will be sent to the Gateway instance that carries the user's session.
+Simple sessions used in the original application can't be used behind load balancers, as there is no guarantee that two subsequent requests will be sent to the Gateway instance that carries the user's session.
 I decided to fix this by implementing a stateless, token-based authentication mechanism.
 
 #### 9. CD
